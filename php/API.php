@@ -1,6 +1,6 @@
 <?php
 /*
-Koemei php API client v1
+Koemei php API client
 author : Marina Zimmermann
 */
 
@@ -329,14 +329,14 @@ class RestRequest
 /* MAIN:
 	remember to set USERNAME and PASSWORD in the protected variables */
 if ($argc < 2)
-	exit("Usage: API.v1.php <method> <accept> <path> [upload] [metadata]\n");
+	exit("Usage: API.php <method> <accept> <path> [upload] [metadata]\n");
 
 /*
 Examples:
-upload media:		API.v1.php POST media text/xml test.mp3
-transcribe media:	API.v1.php POST media text/xml media/{id}/transcribe
-transcription status:	API.v1.php GET text/xml media/{id}/transcribe/{process-id}
-info about media:	API.v1.php GET text/xml media/{id}
+upload media:		API.php POST media text/xml test.mp3
+transcribe media:	API.php POST media text/xml media/{id}/transcribe
+transcription status:	API.php GET text/xml media/{id}/transcribe/{process-id}
+info about media:	API.php GET text/xml media/{id}
 */
 
 $method = $argv[1];
