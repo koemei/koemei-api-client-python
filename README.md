@@ -1,7 +1,7 @@
-php-client
-==========
+Koemei API clients
+==================
 
-PHP client for Koemei API
+Koemei API clients
 
 A basic use case for generating captions is :
 1. upload media : POST media {media_file_name}
