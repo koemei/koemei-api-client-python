@@ -21,14 +21,14 @@ class RestRequest
 	protected $boundary;
 	protected $fileLength;
 
-        public function __construct ($method = 'GET', $path = null, $accept = 'text/xml', $audioFilename = null, $metadataFilename = null)
+        public function __construct ($method = 'GET', $path = null, $accept = 'text/xml', $audioFilename = null, $metadataFilename = null, $username = null, $password = null)
         {
                 $this->url                      = 'https://www.koemei.com/REST';
                 $this->verb                     = $method;
                 $this->requestBody              = $path;
                 $this->requestLength		= 0;
-                $this->username                 = 'testuser@koemei.com';
-                $this->password                 = 'pwd4test';
+                $this->username                 = $username;
+                $this->password                 = $password;
                 $this->acceptType               = $accept;
 		$this->audioFilename		= $audioFilename;
 		$this->metadataFilename		= $metadataFilename;
@@ -160,7 +160,7 @@ class RestRequest
 	// setting curl options
         protected function setCurlOpts (&$curlHandle)
         {
-                curl_setopt($curlHandle, CURLOPT_TIMEOUT, 50);
+                curl_setopt($curlHandle, CURLOPT_TIMEOUT, 300);
                 curl_setopt($curlHandle, CURLOPT_URL, $this->url);
                 curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $this->header);
@@ -327,7 +327,11 @@ class RestRequest
 
 
 /* MAIN:
-	remember to set USERNAME and PASSWORD in the protected variables */
+        remember to set USERNAME and PASSWORD below */
+
+$username = null; // replace by username
+$password = null; // replace by password
+
 if ($argc < 2)
 	exit("Usage: API.php <method> <accept> <path> [upload] [metadata]\n");
 
@@ -348,7 +352,7 @@ $metadataFilename = ($argc > 5) ? $argv[5] : null;
 // for the moment:
 $metadataFilename = null;
 
-$request = new RestRequest($method, $path, $accept, $audioFilename, $metadataFilename);
+$request = new RestRequest($method, $path, $accept, $audioFilename, $metadataFilename, $username, $password);
 
 $request->execute();
 
