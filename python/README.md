@@ -1,40 +1,48 @@
 Koemei API python client
 =========================
 
-*Note : You need to change the login/pwd on line 50.*
+*Note : You need to change the login/pwd in the example or mainAPI.*
+
+*Instructions for using the command line with mainAPI.py*
 
 *   To make an upload:
 
-API.py POST text/xml  media {audio_file}
+mainAPI.py -u {audio_file} Media create text/xml
 
 or
 
-API.py POST text/xml media http://www.youtube.com/watch?v=xxxxxxxx
+mainAPI.py -u http://www.youtube.com/watch?v=xxxxxxxx Media create text/xml
 
 *   To start transcription
 
-API.py  POST text/xml  media/{media_UUID}/transcribe
+mainAPI.py -i {uid} Media transcribe text/xml
 
 *   To check status:
 
-API.py GET text/xml media/{media_UUID}/transcribe/{process_UUID}
+mainAPI.py -i {uid} -p {process_id}  Process get text/xml
 
 *   To get the transcript:
 
-API GET text/xml transcripts/{transcript_UUID}
+mainAPI.py -i {uid} Transcript get text/xml
 
 *   To list your uploads:
 
-API GET text/xml media
+mainAPI.py Media get_list text/xml
 
 *   To delete a media
 
-API DELETE text/xml kobjects/{kobject_UUID}
+mainAPI.py -i {uid} KObject delete text/xml
 
 *   To create a new empty K-Object :
 
-API.py POST text/xml kobjects
+mainAPI.py KObject create text/xml
 
-*   To upload a media to a K-Object :
+*An example of the direct use of the classes is found in example.py*
 
-API.py  POST text/xml  kobjects/{kobject_UUID}/media {audio file}
+*   Upload a media file
+
+*   Request a transcript
+
+*   Check progress of transcription repeatedly (might take very long and is not necessarily recommended)
+
+*   Save transcript (can also be done separately using the Transcript object)
