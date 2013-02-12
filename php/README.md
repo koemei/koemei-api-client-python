@@ -3,7 +3,7 @@ Koemei php API client
 
 *Note : remember to set USERNAME and PASSWORD in the protected variables*
 
-Usage : API.php <method> <accept> <path> [upload] [metadata]
+Usage : API.php \<method\> \<accept\> \<path\> [upload] [metadata]
 
 Examples:
 *	upload media:		API.php POST text/xml media test.mp3
