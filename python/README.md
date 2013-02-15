@@ -11,7 +11,7 @@ mainAPI.py -u {audio_file} Media create text/xml
 
 or
 
-mainAPI.py -u http://www.youtube.com/watch?v=xxxxxxxx Media create text/xml
+mainAPI.py -u 'http://www.youtube.com/watch?v=xxxxxxxx' Media create text/xml
 
 *   To start transcription
 

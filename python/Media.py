@@ -1,5 +1,5 @@
 
-import sys, urllib2
+import sys, urllib2, urllib
 from encode import multipart_encode, MultipartParam
 
 
