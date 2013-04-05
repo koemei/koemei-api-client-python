@@ -37,7 +37,7 @@ class Media(BaseObject):
 
       if len(self.audioFilename) > 0:
         if 'http' in self.audioFilename :
-            self.path = self.path +"?media="+ urllib.quote(self.audioFilename)
+            self.path = self.path +"?media="+ urllib.quote(self.audioFilename,safe='')
             self.datagen = "" # should not be empty dict but empty string!
         else :
             if len(self.metadataFilename) > 0:

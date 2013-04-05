@@ -15,11 +15,11 @@ class RestRequest
         protected $acceptType;
         protected $responseBody;
         protected $responseInfo;
-	protected $error;
-	protected $errorno;
-	protected $status;
-	protected $boundary;
-	protected $fileLength;
+        protected $error;
+        protected $errorno;
+        protected $status;
+        protected $boundary;
+        protected $fileLength;
 
         public function __construct ($method = 'GET', $path = null, $accept = 'text/xml', $audioFilename = null, $metadataFilename = null, $username = null, $password = null)
         {
@@ -30,16 +30,16 @@ class RestRequest
                 $this->username                 = $username;
                 $this->password                 = $password;
                 $this->acceptType               = $accept;
-		$this->audioFilename		= $audioFilename;
-		$this->metadataFilename		= $metadataFilename;
-		$this->fileLength		= 0;
-		$this->header			= array('Accept: ' . $this->acceptType);
+                $this->audioFilename		= $audioFilename;
+                $this->metadataFilename		= $metadataFilename;
+                $this->fileLength		= 0;
+                $this->header			= array('Accept: ' . $this->acceptType);
                 $this->responseBody             = null;
                 $this->responseInfo             = null;
-		$this->errorno			= null;
-		$this->error			= null;
-		$this->status			= null;
-		$this->boundary			= null;
+                $this->errorno			= null;
+                $this->error			= null;
+                $this->status			= null;
+                $this->boundary			= null;
         }
 
         public function flush ()
@@ -98,12 +98,11 @@ class RestRequest
 		// media upload
 		if ($this->requestBody == 'media')
 		{
-
 			$this->url .= "/" . $this->requestBody;
 
 			if (strpos($this->audioFilename, 'http') !== false)
 			{
-				$this->url .= "?media=" . $this->audioFilename;
+				$this->url .= "?media=" .urlencode($this->audioFilename);
 				$this->requestBody = "";
 			}
 			else
@@ -163,12 +162,12 @@ class RestRequest
                 curl_setopt($curlHandle, CURLOPT_TIMEOUT, 300);
                 curl_setopt($curlHandle, CURLOPT_URL, $this->url);
                 curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $this->header);
-		curl_setopt ($curlHandle, CURLOPT_SSL_VERIFYHOST, 0);
-		curl_setopt ($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, true ); 
-		curl_setopt($curlHandle, CURLOPT_VERBOSE, true);
-		curl_setopt($curlHandle, CURLINFO_HEADER_OUT, true);
+                curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $this->header);
+                curl_setopt ($curlHandle, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt ($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+                curl_setopt($curlHandle, CURLOPT_FOLLOWLOCATION, true );
+                curl_setopt($curlHandle, CURLOPT_VERBOSE, true);
+                curl_setopt($curlHandle, CURLINFO_HEADER_OUT, true);
         	curl_setopt($curlHandle, CURLOPT_FRESH_CONNECT, true);
         }
 
@@ -177,7 +176,7 @@ class RestRequest
         {
                 if ($this->username !== null && $this->password !== null)
                 {
-			$non_encoded_auth = "$this->username:$this->password";
+			            $non_encoded_auth = "$this->username:$this->password";
                         curl_setopt($curlHandle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
                         curl_setopt($curlHandle, CURLOPT_USERPWD, $non_encoded_auth);
                 }
@@ -329,8 +328,8 @@ class RestRequest
 /* MAIN:
         remember to set USERNAME and PASSWORD below */
 
-$username = null; // replace by username
-$password = null; // replace by password
+$username = 'testuser@koemei.com'; // replace by username
+$password = 'pwd4test'; // replace by password
 
 if ($argc < 2)
 	exit("Usage: API.php <method> <accept> <path> [upload] [metadata]\n");
