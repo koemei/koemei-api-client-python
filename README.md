@@ -1,13 +1,25 @@
-Koemei API clients
-==================
+Koemei API python client
+=========================
 
-Koemei API clients
+* Note : You need to change the login/pwd in the example or mainAPI. *
 
-A basic use case for generating captions is :
+Basic use case for generating captions
+---------------------
 
-1.  upload media : POST media {media_file_name}
-2.  start transcription : POST media/{media_uid}/transcribe
-3.  check transcription status (poll) : GET media/{media_uid}/transcribe/{process_uid}
-4.  get transcript/captions : GET transcripts/{transcript_uuid}
+1. Upload a media file
 
-For a more detailed documentation, please look at https://www.koemei.com/api/
+    mainAPI.py -u {audio_file} Media create text/xml
+
+or
+
+    mainAPI.py -u 'http://www.youtube.com/watch?v=xxxxxxxx' Media create text/xml
+
+2. Start transcription
+
+    mainAPI.py -i {media_uuid} Media transcribe text/xml
+
+3. Get transcript/captions
+
+    mainAPI.py -i {uid} Transcript get text/xml
+
+**For a more detailed documentation, please have a look at [the API documentation](https://www.koemei.com/api/)**
