@@ -12,11 +12,14 @@ def create_metadata(metadataFilename):
 
 from BaseObject import BaseObject
 
+
 class Media(BaseObject):
+
   def __init__(self, accept, username="", password="", uid="", process_id="", audioFilename="", metadataFilename=""):
       BaseObject.__init__(self, accept, username=username, password=password, uid=uid, process_id=process_id, audioFilename=audioFilename, metadataFilename=metadataFilename)
       self.path = 'media/'
       self.path_trans = '/transcribe'
+      self.path_publish = '/publish'
 
   @BaseObject._reset_headers
   def get(self):
@@ -61,4 +64,16 @@ class Media(BaseObject):
       #print >> sys.stderr, type(self.uid)
       #print >> sys.stderr, type(self.path)
       request = urllib2.Request(self.dest+self.path+self.uid+self.path_trans, data="", headers=self.headers)
+      BaseObject._execute(self, request)
+
+
+  #TODO : this needs to be implemented
+  @BaseObject._reset_headers
+  def publish(self):
+      print >> sys.stderr, 'making put request to: %s%s' % (self.dest,self.path+self.uid+self.path_trans)
+      self.datagen = {}
+      #print >> sys.stderr, self.username, self.password
+      #print >> sys.stderr, type(self.uid)
+      #print >> sys.stderr, type(self.path)
+      request = urllib2.Request(self.dest+self.path+self.uid+self.path_publish, data="", headers=self.headers)
       BaseObject._execute(self, request)

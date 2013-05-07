@@ -8,15 +8,19 @@
 # 1) Upload a media file
 # 2) Request a transcript
 # 3) Check progress of transcription  repeatedly
-#    (might take very long and is not necessarily recommended)
+#    (might take very long and is not recommended, instead make use of the success_callback_url
+#    parameter to the 'transcribe' API call)
 # 4) Save transcript
 #    (can also be done separately using the Transcript object)
 # ==============================================================
 
-import sys, re, time
+import sys
+import re
+import time
 
 # for streaming
 from streaminghttp import register_openers
+
 
 def main():
 
@@ -60,11 +64,11 @@ def main():
        print "Transcription has been accepted"
        search = None
        search = re.search('<atom:link href="https://www.koemei.com/REST/media/.*/transcribe/(.*)" rel="self"></atom:link>', inst.response.read())
-       if search != None:
+       if search is not None:
           process_id = search.group(1)
           print "The following process id has been extracted: %s" % process_id
        else:
-          print >> sys.stderr, "An error occured trying to extract the process id"
+          print >> sys.stderr, "An error occurred trying to extract the process id"
 
     else:
        print >> sys.stderr, "-------- An error occurred, response: --------"
@@ -80,7 +84,7 @@ def main():
 
     transcript_ready = False
 
-    while (transcript_ready == False):
+    while not transcript_ready:
 
          inst.get()
 
@@ -102,19 +106,18 @@ def main():
                    break
             transcript.close()
             # if no progress info has been found, check if the transcript is ready:
-            if search == None:
+            if search is None:
                transcript = open('transcript.xml', 'r')
                for e in transcript.readlines():
                    e = e.strip()
-                   search = None
                    search = re.search('<segmentation>', e)
-                   if search != None:
+                   if search is not None:
                       transcript_ready = True
                       print "Transcription has finished, the transcript has been saved to transcript.xml"
                       break
             transcript.close()
             if search == None:
-               print >> sys.stderr, "An error occured trying to extract the progress"
+               print >> sys.stderr, "An error occurred trying to extract the progress"
 
          else:
             print >> sys.stderr, "-------- An error occurred, response: --------"
@@ -122,7 +125,7 @@ def main():
             print >> sys.stderr, "-------- Headers --------"
             print >> sys.stderr, inst.response.headers
 
-         if transcript_ready == False:
+         if not transcript_ready:
             time.sleep(600)
 
 
