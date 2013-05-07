@@ -20,6 +20,7 @@ class Media(BaseObject):
       self.path = 'media/'
       self.path_trans = '/transcribe'
       self.path_publish = '/publish'
+      self.path_unpublish = '/unpublish'
 
   @BaseObject._reset_headers
   def get(self):
@@ -57,23 +58,27 @@ class Media(BaseObject):
       BaseObject._execute(self, request)
 
   @BaseObject._reset_headers
-  def transcribe(self):
+  def transcribe(self, success_callback_url=None, error_callback_url=None):
       print >> sys.stderr, 'making post request to: %s%s' % (self.dest,self.path+self.uid+self.path_trans)
       self.datagen = {}
-      #print >> sys.stderr, self.username, self.password
-      #print >> sys.stderr, type(self.uid)
-      #print >> sys.stderr, type(self.path)
-      request = urllib2.Request(self.dest+self.path+self.uid+self.path_trans, data="", headers=self.headers)
+
+      data = urllib.urlencode({'success_callback_url': success_callback_url, 'error_callback_url': error_callback_url,})
+      request = urllib2.Request(self.dest+self.path+self.uid+self.path_trans, data=data, headers=self.headers)
       BaseObject._execute(self, request)
 
 
-  #TODO : this needs to be implemented
   @BaseObject._reset_headers
   def publish(self):
-      print >> sys.stderr, 'making put request to: %s%s' % (self.dest,self.path+self.uid+self.path_trans)
+      print >> sys.stderr, 'making put request to: %s%s' % (self.dest,self.path+self.uid+self.path_publish)
       self.datagen = {}
-      #print >> sys.stderr, self.username, self.password
-      #print >> sys.stderr, type(self.uid)
-      #print >> sys.stderr, type(self.path)
       request = urllib2.Request(self.dest+self.path+self.uid+self.path_publish, data="", headers=self.headers)
+      request.get_method = lambda: 'PUT'
+      BaseObject._execute(self, request)
+
+  @BaseObject._reset_headers
+  def unpublish(self):
+      print >> sys.stderr, 'making put request to: %s%s' % (self.dest,self.path+self.uid+self.path_unpublish)
+      self.datagen = {}
+      request = urllib2.Request(self.dest+self.path+self.uid+self.path_unpublish, data="", headers=self.headers)
+      request.get_method = lambda: 'PUT'
       BaseObject._execute(self, request)

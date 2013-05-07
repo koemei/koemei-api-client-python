@@ -7,127 +7,95 @@
 # EXAMPLE USAGE:
 # 1) Upload a media file
 # 2) Request a transcript
-# 3) Check progress of transcription  repeatedly
-#    (might take very long and is not recommended, instead make use of the success_callback_url
-#    parameter to the 'transcribe' API call)
-# 4) Save transcript
+# 3) Save transcript
 #    (can also be done separately using the Transcript object)
+# 4) Publish transcript (will be made available to the public)
+# 5) Unpublish transcript
 # ==============================================================
 
 import sys
 import re
 import time
+from Media import Media
 
 # for streaming
 from streaminghttp import register_openers
 
+username = "sebastien.dupont@koemei.com"
+password = "pwd4seb"
+
 
 def main():
-
-    username = ""
-    password = ""
-
-    from Media import Media
-
     register_openers()
+    #upload_transcribe()
+    publish_unpublish(media_uuid='682bd899-14fd-4db4-bd53-badc346e789c')
+
+
+def upload_transcribe():
+    """
+    Upload a media file to Koemei for transcription
+    """
 
     # 1) Upload a media file
     inst = Media(accept="text/xml", username=username, password=password, audioFilename="test.mp3")
-
     inst.create()
 
     # extract the uid given to this media item
     if inst.response.code == 200:
-       print "Media item has been created successfully"
-       search = None
-       search = re.search("<id>(.*)</id>", inst.response.read())
-       if search != None:
-          uid = search.group(1)
-          uid = str(uid)
-          print "The following uid has been extracted: %s" % uid
-       else:
-          print >> sys.stderr, "An error occured trying to extract the uid"
+        print "Media item has been created successfully"
+        search = None
+        search = re.search("<id>(.*)</id>", inst.response.read())
+        if search is not None:
+            uid = str(search.group(1))
+            print "The following uid has been extracted: %s" % uid
+        else:
+            print >> sys.stderr, "An error occured trying to extract the uid"
 
     else:
-       print >> sys.stderr, "-------- An error occurred, response: --------"
-       print >> sys.stderr, inst.response.code, inst.response.msg
-       print >> sys.stderr, "-------- Headers --------"
-       print >> sys.stderr, inst.response.headers
+        print >> sys.stderr, "-------- An error occurred, response: --------"
+        print >> sys.stderr, inst.response.code, inst.response.msg
+        print >> sys.stderr, "-------- Headers --------"
+        print >> sys.stderr, inst.response.headers
 
     inst.uid = uid
 
     # 2) Request a transcript of the just uploaded media item
-    inst.transcribe()
+    # you should change those 2 callbacks to the url of a handler callback on your website
+    inst.transcribe(success_callback_url=None, error_callback_url=None)
 
     # extract the process id given to this process:
     if inst.response.code == 202:
-       print "Transcription has been accepted"
-       search = None
-       search = re.search('<atom:link href="https://www.koemei.com/REST/media/.*/transcribe/(.*)" rel="self"></atom:link>', inst.response.read())
-       if search is not None:
-          process_id = search.group(1)
-          print "The following process id has been extracted: %s" % process_id
-       else:
-          print >> sys.stderr, "An error occurred trying to extract the process id"
+        print "Transcription has been accepted"
+        search = None
+        search = re.search(
+            '<atom:link href="https://www.koemei.com/REST/media/.*/transcribe/(.*)" rel="self"></atom:link>',
+            inst.response.read())
+        if search is not None:
+            process_id = search.group(1)
+            print "The following process id has been extracted: %s" % process_id
+        else:
+            print >> sys.stderr, "An error occurred trying to extract the process id"
 
     else:
-       print >> sys.stderr, "-------- An error occurred, response: --------"
-       print >> sys.stderr, inst.response.code, inst.response.msg
-       print >> sys.stderr, "-------- Headers --------"
-       print >> sys.stderr, inst.response.headers
+        print >> sys.stderr, "-------- An error occurred, response: --------"
+        print >> sys.stderr, inst.response.code, inst.response.msg
+        print >> sys.stderr, "-------- Headers --------"
+        print >> sys.stderr, inst.response.headers
 
-    time.sleep(5)
 
-    from Process import Process
-
-    inst = Process(accept="text/xml", username=username, password=password, uid=uid, process_id=process_id)
-
-    transcript_ready = False
-
-    while not transcript_ready:
-
-         inst.get()
-
-         # extract the progress of this process and if completed the transcript id:
-         if inst.response.code == 200:
-            transcript = open('transcript.xml', 'w+')
-            transcript.write(inst.response.read())
-            transcript.close()
-
-            transcript = open('transcript.xml', 'r')
-            for e in transcript.readlines():
-                e = e.strip()
-                search = None
-                search = re.search('<progress>(.*)</progress>', e)
-                if search != None:
-                   print "Transcription still in progress"
-                   progress = search.group(1)
-                   print "The process is at %s %%" % progress
-                   break
-            transcript.close()
-            # if no progress info has been found, check if the transcript is ready:
-            if search is None:
-               transcript = open('transcript.xml', 'r')
-               for e in transcript.readlines():
-                   e = e.strip()
-                   search = re.search('<segmentation>', e)
-                   if search is not None:
-                      transcript_ready = True
-                      print "Transcription has finished, the transcript has been saved to transcript.xml"
-                      break
-            transcript.close()
-            if search == None:
-               print >> sys.stderr, "An error occurred trying to extract the progress"
-
-         else:
-            print >> sys.stderr, "-------- An error occurred, response: --------"
-            print >> sys.stderr, inst.response.code, inst.response.msg
-            print >> sys.stderr, "-------- Headers --------"
-            print >> sys.stderr, inst.response.headers
-
-         if not transcript_ready:
-            time.sleep(600)
+def publish_unpublish(media_uuid):
+    """
+    Publish and unpublish a media item's transcript.
+    Publishing a transcript will make it available to anyone that knowns its uuid
+    """
+    media_item = Media(accept='text/xml', username=username, password=password, uid=media_uuid)
+    media_item.get()
+    #from xml.dom import minidom
+    #xmldoc = minidom.parseString(media_item.response.read())
+    # current_transcript_uuid = xmldoc.getElementsByTagName('currentTranscript')[0].getElementsByTagName('id')[0].firstChild.data
+    media_item.publish()
+    #media_item.unpublish()
 
 
 if __name__ == "__main__":
-   main()
+    main()
