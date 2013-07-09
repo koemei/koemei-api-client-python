@@ -76,8 +76,8 @@ def main(argv=None):
     accept = 'text/xml'
 
     # NEED TO SPECIFIY USERNAME AND PASSWORD HERE
-    username = ''
-    password =  ''
+    username = '<CHANGEME>'
+    password = '<CHANGEME>'
 
     opts, args = getopt.getopt(argv[1:], "vhi:p:u:m:", ["verbose" ,"help", "uid=", "process_id=", "upload=", "metadata="])
 
