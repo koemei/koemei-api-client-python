@@ -24,21 +24,20 @@ from streaminghttp import register_openers
 username = "<changeme>"
 password = "<changeme>"
 
-
 def main():
     register_openers()
-    upload_transcribe()
-    #upload_align()
+    upload_transcribe(audioFilename="test.mp3")
+    #upload_align(audioFilename="test.mp3", transcriptFilename="transcript_to_align.txt")
     #publish_unpublish(media_uuid='682bd899-14fd-4db4-bd53-badc346e789c')
 
 
-def upload_transcribe():
+def upload_transcribe(audioFilename):
     """
     Upload a media file to Koemei for transcription
     """
 
     # 1) Upload a media file
-    inst = Media(accept="text/xml", username=username, password=password, audioFilename="test.mp3")
+    inst = Media(accept="text/xml", username=username, password=password, audioFilename=audioFilename)
     inst.create()
 
     # extract the uid given to this media item
@@ -98,14 +97,14 @@ def publish_unpublish(media_uuid):
     #media_item.unpublish()
 
 
-def upload_align():
+def upload_align(audioFilename, transcriptFilename):
     """
     Upload a media file to Koemei for alignment
     NOTE : you will need your account to be setup to use this feature
     """
 
     # 1) Upload a media file
-    inst = Media(accept="text/xml", username=username, password=password, audioFilename="test.mp3", transcriptFilename="transcript_to_align.txt")
+    inst = Media(accept="text/xml", username=username, password=password, audioFilename=audioFilename, transcriptFilename=transcriptFilename)
     inst.create()
 
     # extract the uid given to this media item

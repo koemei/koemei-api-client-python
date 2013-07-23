@@ -45,12 +45,16 @@ class Media(BaseObject):
             if 'http' in self.audioFilename:
                 self.path = self.path + "?media=" + urllib.quote(self.audioFilename, safe='')
                 self.datagen = "" # should not be empty dict but empty string!
+                if self.transcriptFilename is not None:
+                    self.datagen, headers_ = multipart_encode({'transcript': read_file(self.transcriptFilename),})
+                    self.headers.update(headers_)
             else:
                 if self.metadataFilename is not None:
                     self.datagen, headers_ = multipart_encode({'metadata': read_file(self.metadataFilename),
                                                                'media': open(self.audioFilename, "rb")})
                 #TODO : allow metadatafilename + transcript for alignment
                 elif self.transcriptFilename is not None:
+                    print >> sys.stderr, "hi"
                     self.datagen, headers_ = multipart_encode({'transcript': read_file(self.transcriptFilename),
                                                                'media': open(self.audioFilename, "rb")})
                 else:
