@@ -23,3 +23,9 @@ or
     mainAPI.py -i {uid} Transcript get text/xml
 
 **For a more detailed documentation, please have a look at [the API documentation](https://www.koemei.com/api/)**
+
+Troubleshooting
+---------------------
+
+Automatic alignment may break with some non-ascii characters.
+To find those: find non ascii chars: perl -ne 'print "$. $_" if m/[\x80-\xFF]/'  utf8.txt
