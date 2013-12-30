@@ -72,7 +72,7 @@ def main(argv=None):
     uid = ""
     process_id = ""
     audioFilename = ""
-    metadataFilename = ""
+    metadataFilename = None
     accept = 'text/xml'
 
     # NEED TO SPECIFIY USERNAME AND PASSWORD HERE
