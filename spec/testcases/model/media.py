@@ -103,6 +103,16 @@ class MediaTestCase(unittest.TestCase):
         assert hasattr(media_item.process_alignment, 'uuid')
 
     """
+    def test_search(self):
+        self.models = Media.get_all(client=self.client, search_query=settings.get('test','media.search.query'))
+        assert len(self.models) > 0
+        for media_item in self.models:
+            assert hasattr(self.models[0], 'title')
+            assert (
+                settings.get('test','media.search.query') in media_item.title or
+    """
+
+    """
     def test_metadata(self):
         pass
 

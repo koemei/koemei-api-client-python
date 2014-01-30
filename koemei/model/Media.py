@@ -32,6 +32,8 @@ class Media(BaseObject):
         url_data = {}
         if kwargs.get('status'):
             url_data.update({'status_filter':  '-'.join(map(lambda x: str(x), kwargs.get('status')))})
+        if kwargs.get('search_query'):
+            url_data.update({'search_query': kwargs.get('search_query')})
 
         url_data = urllib.urlencode(url_data)
         url = [settings.get('base', 'paths.api.media'), url_data]
