@@ -116,6 +116,9 @@ class MediaTestCase(unittest.TestCase):
     def test_metadata(self):
         pass
 
+    def test_quota(self):
+        pass
+
     def test_callbacks(self):
         pass
 
