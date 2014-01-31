@@ -13,7 +13,7 @@ class Process(BaseObject):
         super(Process, self).__init__(fields=fields)
 
     @classmethod
-    def get(cls, client, uuid):
+    def get(cls, client, uuid, deleted=False):
         url = [settings.get('base', 'paths.api.processes'), uuid]
         response = client.request(url=url)
         response_json = json.loads(response)

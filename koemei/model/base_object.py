@@ -12,6 +12,6 @@ class BaseObject(object):
                 setattr(self, field_name, fields[field_name])
 
     @classmethod
-    def get(cls, deleted=False, *args, **kwargs):
+    def get(cls, client, uuid, deleted=False):
         raise NotImplementedError('get', 'This action should be implemented')
 

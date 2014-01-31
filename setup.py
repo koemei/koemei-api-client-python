@@ -21,5 +21,6 @@ setup(name='Koemei API Client',
       install_requires=[
           "requests >=2.0.0",
           "progressbar >= 2.2"
+          "jsonschema >= 2.3.0"
       ],
  )

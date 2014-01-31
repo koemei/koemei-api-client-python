@@ -32,6 +32,7 @@ class MediaTestCase(unittest.TestCase):
         assert hasattr(self.model, 'title') and self.model.title is not None
         assert self.model.uuid == fields['uuid']
 
+
     def test_get_all(self):
         self.models = Media.get_all(client=self.client)
         assert len(self.models) > 0
