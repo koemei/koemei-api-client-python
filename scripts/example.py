@@ -17,7 +17,7 @@ import sys
 import re
 import os
 import traceback
-from koemei.model.media import Media
+from koemei.model_2.media import Media
 from koemei.client import KoemeiClient
 from koemei.utils import settings, log
 from koemei.utils.file import csv_to_json

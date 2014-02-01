@@ -1,6 +1,6 @@
 import unittest
 
-from koemei.model.process import Process
+from koemei.model_2.process import Process
 from koemei.client import KoemeiClient
 from koemei.utils import read_settings_file, log, settings
 
