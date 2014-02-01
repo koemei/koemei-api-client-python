@@ -8,7 +8,7 @@ from koemei.utils.streaminghttp import register_openers
 import json
 
 from base_object import BaseObject
-from koemei.model_2.process import Process
+from koemei.model.process import Process
 from koemei.utils.fileprogress import FileProgress
 
 

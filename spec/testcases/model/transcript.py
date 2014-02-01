@@ -1,6 +1,6 @@
 import unittest
 
-from koemei.model_2.transcript import Transcript
+from koemei.model.transcript import Transcript
 from koemei.client import KoemeiClient
 from koemei.utils import read_settings_file, log, settings
 

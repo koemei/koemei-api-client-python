@@ -1,6 +1,6 @@
 import unittest
 
-from koemei.model_2.media import Media
+from koemei.model.media import Media
 from koemei.client import KoemeiClient
 from koemei.utils import read_settings_file, log, settings
 

@@ -1,6 +1,6 @@
 import json
 
-from koemei.model_2.base_object import BaseObject
+from koemei.model.base_object import BaseObject
 from koemei.utils import check_file_extension
 from koemei.utils import settings
 
