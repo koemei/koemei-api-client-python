@@ -27,9 +27,11 @@ class MediaTestCase(unittest.TestCase):
     def test_get(self):
         fields = {
             'uuid': '69255493-583c-468c-9962-e5586f494027',
+            'title': 'Test media title',
+            'description': 'Test media description'
         }
         self.model = Media.get(client=self.client, uuid=fields['uuid'])
-        assert hasattr(self.model, 'title') and self.model.title is not None
+        assert self.model.title == fields['title']
         assert self.model.uuid == fields['uuid']
 
 
@@ -48,7 +50,10 @@ class MediaTestCase(unittest.TestCase):
         for local_media_file in local_media_files:
             media_filename = "%s/%s" % (settings.get('base', 'path.local.media'), local_media_file)
 
-            self.model = Media.create(client=self.client, media_filename=media_filename)
+            self.model = Media.create(
+                client=self.client,
+                media_filename=media_filename,
+            )
 
             media_item = Media.get(client=self.client, uuid=self.model.uuid)
             assert media_item.uuid == self.model.uuid
@@ -74,6 +79,30 @@ class MediaTestCase(unittest.TestCase):
             assert media_item.process_transcription.status == 'PENDING'
             assert media_item.process_transcription.progress == 0
             assert hasattr(media_item.process_transcription, 'uuid')
+
+    def test_create_local_metadata(self):
+        """
+        Test creation of a media from a local file, by specifying some metadata (title, description, ...)
+        """
+        local_media = {
+            'path': 'test_mp4_short.mp4',
+            'title': 'Test media title',
+            'description':'Test media description',
+        }
+
+        media_filename = "%s/%s" % (settings.get('base', 'path.local.media'), local_media['path'])
+
+        self.model = Media.create(
+            client=self.client,
+            media_filename=media_filename,
+            title=local_media['title'],
+            description=local_media['description'],
+        )
+
+        media_item = Media.get(client=self.client, uuid=self.model.uuid)
+        assert media_item.title == local_media['title']
+        assert media_item.description == local_media['description']
+
 
     def test_create_no_transcribe(self):
             remote_media_file = settings.get('test', 'audio_test_remote_mp3')

@@ -62,6 +62,7 @@ class Media(BaseObject):
         @param metadata_filename: local path to the metadata file containing media info (title, description, ...)
         @param transcript_filename: local path to the plain text transcript file to align
         @param transcribe: automagically launch transcription
+        @param kwargs: title, description, tags, ...
         """
 
         data = {}
@@ -75,6 +76,16 @@ class Media(BaseObject):
                 'service': kwargs.get('service'),
                 'item_id': kwargs.get('item_id')}
             )
+
+        if 'title' in kwargs:
+            data.update({
+                'title': kwargs.get('title'),
+            })
+
+        if 'description' in kwargs:
+            data.update({
+                'description': kwargs.get('description'),
+            })
 
         # upload from remote url
         if 'http' in media_filename:
