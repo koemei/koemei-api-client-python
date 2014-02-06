@@ -1,6 +1,3 @@
-import os
-import sys
-import urllib2
 import urllib
 from koemei.utils.encode import multipart_encode, MultipartParam
 from koemei.utils import log, settings, read_file, check_file_extension
@@ -9,8 +6,16 @@ import json
 
 from base_object import BaseObject
 from koemei.model.process import Process
-from koemei.utils.fileprogress import FileProgress
 
+MEDIA_STATUS = {
+    'ASR': 1,
+    'ALIGN': 2,
+    'EDIT': 3,
+    'UPLOAD': 4,
+    'PUBLISH': 5,
+    'TRANSCODE': 6,
+    'TSP': 7,
+    }
 
 class Media(BaseObject):
 
@@ -29,20 +34,22 @@ class Media(BaseObject):
 
     @classmethod
     def get_all(cls, client, *args, **kwargs):
-        url_data = {}
+        url_params = {}
         if kwargs.get('status'):
-            url_data.update({'status_filter':  '-'.join(map(lambda x: str(x), kwargs.get('status')))})
+            url_params.update({'status_filter':  '-'.join(map(lambda x: str(x), kwargs.get('status')))})
         if kwargs.get('search_query'):
-            url_data.update({'search_query': kwargs.get('search_query')})
+            url_params.update({'search_query': kwargs.get('search_query')})
 
-        url_data = urllib.urlencode(url_data)
-        url = [settings.get('base', 'paths.api.media'), url_data]
-        response = client.request(url=url)
+        url = [settings.get('base', 'paths.api.media')]
+
+        response = client.request(url=url, url_params=url_params)
         response_json = json.loads(response)
 
         media = []
-
+        print response_json
         for media_item in response_json['media']:
+            print media_item
+            print 'media_item'
             media.append(Media(fields=media_item))
         return media
 
@@ -89,29 +96,34 @@ class Media(BaseObject):
 
         # upload from remote url
         if 'http' in media_filename:
-            url.append("?media=" + urllib.quote(media_filename, safe=''))
-            data = "" # should not be empty dict but empty string!
+            #url.append("?media=" + urllib.quote(media_filename, safe=''))
+            #data = "" # should not be empty dict but empty string!
+            print data
+            data.update({
+                'media': media_filename
+            })
 
             if kwargs.get('transcript_filename'):
-                data, headers_ = multipart_encode({'transcript': read_file(kwargs.get('transcript_filename')),})
+                data.update({
+                        'transcript': read_file(kwargs.get('transcript_filename')),
+                })
+                data, headers_ = multipart_encode(data)
+            data = urllib.urlencode(data)
 
         # upload from local hard drive
         else:
             register_openers()
 
-            # TODO : test this and define metadata file format (json)
-            if kwargs.get('metadata_filename'):
-                data, headers_ = multipart_encode({
-                    'metadata': read_file(kwargs.get('metadata_filename')),
-                    'media': open(media_filename, "rb")}
-                )
-            elif kwargs.get('transcript_filename') is not None:
-                data, headers_ = multipart_encode({
+            if kwargs.get('transcript_filename') is not None:
+                data.update({
                     'transcript': read_file(kwargs.get('transcript_filename')),
-                    'media': open(media_filename, "rb")}
-                )
+                    'media': open(media_filename, "rb")
+                })
             else:
-                data, headers_ = multipart_encode({'media': open(media_filename, "rb")})
+                data.update(
+                    {'media': open(media_filename, "rb")}
+                )
+            data, headers_ = multipart_encode(data)
 
         headers.update(headers_)
         response = client.request(url=url, data=data, headers=headers)
@@ -136,7 +148,9 @@ class Media(BaseObject):
 
         response = client.request(url=url, data="", headers=headers)
         response_json = json.loads(response)
+
         self.process_transcription = Process(fields=response_json['process'])
+
         return self.process_transcription
 
     def align(self, client, aligndata, success_callback_url='', error_callback_url='', **kwargs):
@@ -166,6 +180,15 @@ class Media(BaseObject):
             file_path=file_path,
             authorized_file_types=settings.get('base', 'media.authorized_extensions').split(',')
         )
+
+    @property
+    def transcription_status(self):
+        transcription_status = None
+
+        if hasattr(self, 'processes'):
+            transcription_processes = [p for p in self.processes if p.type == Process.st]
+
+        return transcription_status
 
 
 """

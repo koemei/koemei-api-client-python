@@ -15,16 +15,16 @@ Models
 #unittest.TextTestRunner(verbosity=2).run(suite)
 
 # Media
-#suite = unittest.TestLoader().loadTestsFromTestCase(MediaTestCase)
-#unittest.TextTestRunner(verbosity=2).run(suite)
+suite = unittest.TestLoader().loadTestsFromTestCase(MediaTestCase)
+unittest.TextTestRunner(verbosity=2).run(suite)
 
 # Process
 #suite = unittest.TestLoader().loadTestsFromTestCase(ProcessTestCase)
 #unittest.TextTestRunner(verbosity=2).run(suite)
 
 # Transcript
-suite = unittest.TestLoader().loadTestsFromTestCase(TranscriptTestCase)
-unittest.TextTestRunner(verbosity=2).run(suite)
+#suite = unittest.TestLoader().loadTestsFromTestCase(TranscriptTestCase)
+#unittest.TextTestRunner(verbosity=2).run(suite)
 
 """
 suite = unittest.TestLoader().loadTestsFromTestCase(KoemeiClientTestCase)

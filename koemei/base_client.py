@@ -3,7 +3,7 @@ import urllib2
 import traceback
 from koemei.utils import log, settings
 from copy import copy
-
+import urllib
 
 class BaseClient(object):
     """
@@ -38,7 +38,7 @@ class BaseClient(object):
 
         self.response = None
 
-    def path(self, args):
+    def path(self, args, url_params=None):
         """
         Build path for api call
         @params url path params
@@ -49,6 +49,15 @@ class BaseClient(object):
             path_array.append(self.base_path)
             path_array.reverse()
             path = '/'.join(path_array)
+
+            # add request parameters
+            if url_params is not None:
+                path = path + '?'
+                print url_params
+                for key, value in url_params.iteritems():
+                    path = path + '&' + key + '=' + urllib.quote(value, safe='')
+            print path
+
             return path
         except Exception, e:
             log.error("Error building path with params:")
@@ -57,7 +66,7 @@ class BaseClient(object):
             log.error(traceback.format_exc())
             raise
 
-    def request(self, url, data=None, headers={}):
+    def request(self, url, data=None, headers={}, url_params=None):
         """
         GET call at the given url
         @params url: the path to the method to call, relative to the api root url
@@ -65,12 +74,12 @@ class BaseClient(object):
         @return rest response in json
         """
         self._reset_headers(headers)
-        log.debug("Making request to %s" % self.path(url))
+        log.debug("Making request to %s" % self.path(url, url_params))
         log.debug(url)
         log.debug(data)
         log.debug(headers)
 
-        request = urllib2.Request(self.path(url), data=data, headers=headers)
+        request = urllib2.Request(self.path(url, url_params), data=data, headers=headers)
 
         try:
             #print dir(request)
