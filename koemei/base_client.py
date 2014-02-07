@@ -53,10 +53,8 @@ class BaseClient(object):
             # add request parameters
             if url_params is not None:
                 path = path + '?'
-                print url_params
                 for key, value in url_params.iteritems():
                     path = path + '&' + key + '=' + urllib.quote(value, safe='')
-            print path
 
             return path
         except Exception, e:

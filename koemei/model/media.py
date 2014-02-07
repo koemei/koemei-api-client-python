@@ -98,31 +98,17 @@ class Media(BaseObject):
         if 'http' in media_filename:
             #url.append("?media=" + urllib.quote(media_filename, safe=''))
             #data = "" # should not be empty dict but empty string!
-            print data
             data.update({
                 'media': media_filename
             })
-
-            if kwargs.get('transcript_filename'):
-                data.update({
-                        'transcript': read_file(kwargs.get('transcript_filename')),
-                })
-                data, headers_ = multipart_encode(data)
-            data = urllib.urlencode(data)
+            data, headers_ = multipart_encode(data)
 
         # upload from local hard drive
         else:
             register_openers()
-
-            if kwargs.get('transcript_filename') is not None:
-                data.update({
-                    'transcript': read_file(kwargs.get('transcript_filename')),
-                    'media': open(media_filename, "rb")
-                })
-            else:
-                data.update(
-                    {'media': open(media_filename, "rb")}
-                )
+            data.update(
+                {'media': open(media_filename, "rb")}
+            )
             data, headers_ = multipart_encode(data)
 
         headers.update(headers_)
@@ -157,6 +143,7 @@ class Media(BaseObject):
         """
         Align an existing media item.
         """
+        log.info("aligning %s" % aligndata)
         data = {}
         headers = {}
         headers_ = {}

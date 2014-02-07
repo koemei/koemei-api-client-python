@@ -135,18 +135,31 @@ class MediaTestCase(unittest.TestCase):
     #    assert media_item.title == remote_media_file
     #    assert media_item.status in (MEDIA_STATUS['UPLOAD'], MEDIA_STATUS['TRANSCODE'])
 
-    #def test_align(self):
-    #    media_item = Media.create(
-    #        client=self.client,
-    #        media_filename="%s/%s" % (settings.get('base', 'path.local.media'), 'test_mp4_short.mp4'),
-    #        aligndata="%s/%s" % (settings.get('base', 'path.local.transcripts'), settings.get('test', 'transcript.align')),
-    #        transcribe=False
-    #    )
-    #
-    #    assert hasattr(media_item, 'process_alignment')
-    #    assert media_item.process_alignment.status == 'PENDING'
-    #    assert media_item.process_alignment.progress == 0
-    #    assert hasattr(media_item.process_alignment, 'uuid')
+    def test_align_local(self):
+        media_item = Media.create(
+            client=self.client,
+            media_filename="%s/%s" % (settings.get('base', 'path.local.media'), 'test_mp4_short.mp4'),
+            aligndata="%s/%s" % (settings.get('base', 'path.local.transcripts'), settings.get('test', 'transcript.align')),
+            transcribe=False
+        )
+
+        assert hasattr(media_item, 'process_alignment')
+        assert media_item.process_alignment.status == 'PENDING'
+        assert media_item.process_alignment.progress == 0
+        assert hasattr(media_item.process_alignment, 'uuid')
+
+    def test_align_remote(self):
+        media_item = Media.create(
+            client=self.client,
+            media_filename=settings.get('test', 'audio_test_remote_mp3'),
+            aligndata="%s/%s" % (settings.get('base', 'path.local.transcripts'), settings.get('test', 'transcript.align')),
+            transcribe=False
+        )
+
+        assert hasattr(media_item, 'process_alignment')
+        assert media_item.process_alignment.status == 'PENDING'
+        assert media_item.process_alignment.progress == 0
+        assert hasattr(media_item.process_alignment, 'uuid')
 
 
     #def test_search_global(self):
@@ -170,29 +183,29 @@ class MediaTestCase(unittest.TestCase):
     #* check public_only
     #"""
 
-    def test_search_title(self):
-        """
-        Check that videos are indexed by title
-        """
-        fields = {
-            'title': 'Test media title',
-            'description': 'Test media description',
-            'search_query': 'media title',
-        }
-
-        media_item = Media.create(
-            client=self.client,
-            media_filename=settings.get('test', 'audio_test_remote_mp3'),
-            title=fields['title'])
-
-
-        media = Media.get_all(
-            client=self.client,
-            user_uuid=settings.get('credentials', 'koemei_user_uuid'),
-            search_query=fields['search_query']
-        )
-
-        assert len([m for m in media if m.uuid == media_item.uuid]) > 0
+    #def test_search_title(self):
+    #    """
+    #    Check that videos are indexed by title
+    #    """
+    #    fields = {
+    #        'title': 'Test media title',
+    #        'description': 'Test media description',
+    #        'search_query': 'media title',
+    #    }
+    #
+    #    media_item = Media.create(
+    #        client=self.client,
+    #        media_filename=settings.get('test', 'audio_test_remote_mp3'),
+    #        title=fields['title'])
+    #
+    #
+    #    media = Media.get_all(
+    #        client=self.client,
+    #        user_uuid=settings.get('credentials', 'koemei_user_uuid'),
+    #        search_query=fields['search_query']
+    #    )
+    #
+    #    assert len([m for m in media if m.uuid == media_item.uuid]) > 0
 
     #def test_search_description(self):
     #def test_search_transcript(self):
