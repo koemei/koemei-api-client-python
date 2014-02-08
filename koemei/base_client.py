@@ -15,8 +15,6 @@ class BaseClient(object):
         Create the api client
         """
 
-        self.accept = settings.get('base', 'accept')
-
         # init config
         try:
             self.username = settings.get("credentials", "username")
@@ -64,14 +62,14 @@ class BaseClient(object):
             log.error(traceback.format_exc())
             raise
 
-    def request(self, url, data=None, headers={}, url_params=None):
+    def request(self, url, data=None, headers={}, url_params=None, accept=None):
         """
         GET call at the given url
         @params url: the path to the method to call, relative to the api root url
         @params params: dictionary containing the parameters for the rest call
         @return rest response in json
         """
-        self._reset_headers(headers)
+        self._reset_headers(headers, accept)
         log.debug("Making request to %s" % self.path(url, url_params))
         log.debug(url)
         log.debug(data)
@@ -100,15 +98,19 @@ class BaseClient(object):
             #print >> sys.stderr,"-------- body --------"
             #print self.response.read()
 
-    def _reset_headers(self, headers={}):
+    def _reset_headers(self, headers={}, accept=None):
         self.headers = headers
         import base64
+
+        if accept is None:
+            accept = settings.get('base', settings.get('base', 'accept.default'))
+        else:
+            accept = settings.get('base', 'accept.%s' % accept)
 
         if self.username != "" and self.password != "":
             auth_string = base64.encodestring('%s:%s' % (self.username, self.password))[:-1]
             self.headers.update({'authorization': 'basic %s' % auth_string,
-                                 'accept': self.accept, })
-
+                                 'accept': accept, })
         else:
-            print >> sys.stderr, 'The username and/or password are empty.'
+            log.error('The username and/or password are empty.')
             exit()

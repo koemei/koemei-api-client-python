@@ -18,6 +18,7 @@ import re
 import os
 import traceback
 from koemei.model.media import Media
+from koemei.model.transcript import Transcript
 from koemei.client import KoemeiClient
 from koemei.utils import settings, log
 from koemei.utils.file import csv_to_json
@@ -57,9 +58,39 @@ def main():
 
     """
 
+    batch_download_transcript()
+
+
+def batch_download_transcript():
     register_openers()
 
-    # align all the
+    media_to_download_transcript_for = csv_to_json(
+        csv_filename="%s/%s" % (
+            settings.get('base', 'path.local.transcripts'),
+            settings.get('test', 'media.download_transcript.csv')
+        )
+    )['data']
+    for media_item in media_to_download_transcript_for:
+        download_transcript(
+            media_uuid=media_item[0]
+        )
+
+
+def download_transcript(media_uuid):
+    media_item = Media.get(client=client, uuid=media_uuid)
+    print media_item.current_transcript
+
+    transcript = Transcript.get(client=client, uuid=media_item.current_transcript['uuid'], format='srt')
+    if not os.path.exists(settings.get('base','path.local.scripts.output')):
+        os.makedirs(settings.get('base','path.local.scripts.output'))
+    f = open("%s/%s.srt" % (settings.get('base','path.local.scripts.output'), media_item.title), 'w')
+    f.write(transcript.content)
+
+
+def batch_align():
+    register_openers()
+
+    # align all the files from the csv
     media_to_align = csv_to_json(
         csv_filename="%s/%s" % (
             settings.get('base', 'path.local.media'),

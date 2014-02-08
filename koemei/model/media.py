@@ -46,10 +46,8 @@ class Media(BaseObject):
         response_json = json.loads(response)
 
         media = []
-        print response_json
+        log.debug(response_json['media'])
         for media_item in response_json['media']:
-            print media_item
-            print 'media_item'
             media.append(Media(fields=media_item))
         return media
 
