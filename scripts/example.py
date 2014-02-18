@@ -58,7 +58,8 @@ def main():
 
     """
 
-    batch_download_transcript()
+    #batch_download_transcript()
+    batch_upload_transcribe()
 
 
 def batch_download_transcript():
@@ -73,6 +74,21 @@ def batch_download_transcript():
     for media_item in media_to_download_transcript_for:
         download_transcript(
             media_uuid=media_item[0]
+        )
+
+
+def batch_upload_transcribe():
+    register_openers()
+
+    media_to_upload_transcribe = csv_to_json(
+        csv_filename="%s/%s" % (
+            settings.get('base', 'path.local.media'),
+            settings.get('test', 'media.transcribe.csv')
+        )
+    )['data']
+    for media_item in media_to_upload_transcribe:
+        upload_transcribe(
+            media_filename=media_item[0]
         )
 
 
@@ -106,6 +122,7 @@ def batch_align():
             )
         )
 
+
 def upload_transcribe(media_filename):
     """
     Upload a media file to Koemei for transcription
@@ -120,6 +137,7 @@ def upload_transcribe(media_filename):
         log.error(e)
         log.error(traceback.format_exc())
         raise e
+
 
 def publish_unpublish(media_uuid):
     """
