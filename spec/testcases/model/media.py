@@ -47,6 +47,17 @@ class MediaTestCase(unittest.TestCase):
     def test_get_all(self):
         local_media_files = [
             'test_mp4_short.mp4',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
+            'test_64K_short.mp3',
             'test_64K_short.mp3'
         ]
         for local_media_file in local_media_files:
@@ -57,13 +68,21 @@ class MediaTestCase(unittest.TestCase):
                 media_filename=media_filename,
             )
 
+        # vanilla test
         media = Media.get_all(client=self.client)
         assert len(media) > 0
         for m in media:
             assert hasattr(m, 'title')
-            assert hasattr(m, '')
+        assert len(media) == 10
 
-        # TODO: Test pagination
+        # test pagination
+        page_size = 5
+        media = Media.get_all(client=self.client, start=0, count=page_size)
+        assert len(media) == page_size
+
+        media2 = Media.get_all(client=self.client, start=page_size-1, count=page_size)
+        assert media[page_size-1].uuid == media2[0].uuid
+
         # TODO: Test filters
 
     def test_create_local(self):
@@ -200,7 +219,7 @@ class MediaTestCase(unittest.TestCase):
     #    )
     #
     #    assert len([m for m in media if m.uuid == media_item.uuid]) > 0
-    #
+
     #def test_search_description(self):
     #def test_search_transcript(self):
     #def test_search_notes(self):
