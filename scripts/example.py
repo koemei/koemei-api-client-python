@@ -61,6 +61,8 @@ def main():
     #batch_download_transcript()
     batch_upload_transcribe()
 
+    #batch_align()
+
 
 def batch_download_transcript():
     register_openers()
@@ -88,7 +90,8 @@ def batch_upload_transcribe():
     )['data']
     for media_item in media_to_upload_transcribe:
         upload_transcribe(
-            media_filename=media_item[0]
+            media_filename=media_item[0],
+            title=media_item[1]
         )
 
 
@@ -123,14 +126,14 @@ def batch_align():
         )
 
 
-def upload_transcribe(media_filename):
+def upload_transcribe(media_filename, title=None):
     """
     Upload a media file to Koemei for transcription
     """
 
     try:
         log.info("Upload and transcribe file %s ..." % media_filename)
-        media_item = Media.create(client=client, media_filename=media_filename)
+        media_item = Media.create(client=client, media_filename=media_filename, title=title)
         log.info("... OK - media uuid: %s" % media_item.uuid)
     except Exception, e:
         log.error("... Error creating media %s ..." % media_filename)

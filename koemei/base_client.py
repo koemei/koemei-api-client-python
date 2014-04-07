@@ -52,7 +52,7 @@ class BaseClient(object):
             if url_params is not None:
                 path = path + '?'
                 for key, value in url_params.iteritems():
-                    path = path + '&' + key + '=' + urllib.quote(value, safe='')
+                    path = path + '&' + key + '=' + urllib.quote(str(value), safe='')
 
             return path
         except Exception, e:

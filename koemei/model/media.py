@@ -40,6 +40,11 @@ class Media(BaseObject):
         if kwargs.get('search_query'):
             url_params.update({'search_query': kwargs.get('search_query')})
 
+        if kwargs.get('count'):
+            url_params.update({'count': kwargs.get('count')})
+        if kwargs.get('start'):
+            url_params.update({'start': kwargs.get('start')})
+
         url = [settings.get('base', 'paths.api.media')]
 
         response = client.request(url=url, url_params=url_params)
@@ -82,7 +87,7 @@ class Media(BaseObject):
                 'item_id': kwargs.get('item_id')}
             )
 
-        if 'title' in kwargs:
+        if 'title' in kwargs and kwargs["title"] is not None:
             data.update({
                 'title': kwargs.get('title'),
             })
@@ -126,6 +131,23 @@ class Media(BaseObject):
         """
         headers = {}
         url = [settings.get('base', 'paths.api.media'), self.uuid, settings.get('base', 'paths.api.media.transcribe')]
+
+        data = urllib.urlencode(
+            {'success_callback_url': success_callback_url, 'error_callback_url': error_callback_url})
+
+        response = client.request(url=url, data="", headers=headers)
+        response_json = json.loads(response)
+
+        self.process_transcription = Process(fields=response_json['process'])
+
+        return self.process_transcription
+
+    def transcode(self, client, success_callback_url='', error_callback_url='', **kwargs):
+        """
+        Transcode an existing media item.
+        """
+        headers = {}
+        url = [settings.get('base', 'paths.api.media'), self.uuid, settings.get('base', 'paths.api.media.transcode')]
 
         data = urllib.urlencode(
             {'success_callback_url': success_callback_url, 'error_callback_url': error_callback_url})
