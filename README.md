@@ -28,6 +28,7 @@ Known issues
 ---------
 
     * Automatic alignment may break with some non-ascii characters. To find those: find non ascii chars: perl -ne 'print "$. $_" if m/[\x80-\xFF]/'  utf8.txt
+    * funny � characters are not supported either.
 
 Troubleshooting
 ----------

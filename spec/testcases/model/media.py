@@ -220,6 +220,7 @@ class MediaTestCase(unittest.TestCase):
     #
     #    assert len([m for m in media if m.uuid == media_item.uuid]) > 0
 
+    # TODO: check search is case insensitive
     #def test_search_description(self):
     #def test_search_transcript(self):
     #def test_search_notes(self):
