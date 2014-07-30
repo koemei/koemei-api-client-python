@@ -17,6 +17,7 @@ MEDIA_STATUS = {
     'TSP': 7,
     }
 
+
 class Media(BaseObject):
 
     def __init__(self, fields={}):
@@ -118,6 +119,7 @@ class Media(BaseObject):
         response = client.request(url=url, data=data, headers=headers)
         response_json = json.loads(response)
         media_item = Media(fields=response_json['media_item'])
+
         if aligndata is not None:
             media_item.align(client=client, aligndata=aligndata)
         elif transcribe:
@@ -141,6 +143,23 @@ class Media(BaseObject):
         self.process_transcription = Process(fields=response_json['process'])
 
         return self.process_transcription
+
+    def anthrotranscribe(self, client, success_callback_url='', error_callback_url='', **kwargs):
+        """
+        Transcribe manually an existing media item.
+        """
+        headers = {}
+        url = [settings.get('base', 'paths.api.media'), self.uuid, settings.get('base', 'paths.api.media.anthrotranscribe')]
+
+        data = urllib.urlencode(
+            {'success_callback_url': success_callback_url, 'error_callback_url': error_callback_url})
+
+        response = client.request(url=url, data="", headers=headers)
+        response_json = json.loads(response)
+
+        self.process_tsp = Process(fields=response_json['process'])
+
+        return self.process_tsp
 
     def transcode(self, client, success_callback_url='', error_callback_url='', **kwargs):
         """

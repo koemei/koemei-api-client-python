@@ -17,7 +17,6 @@ class Transcript(BaseObject):
     def get(cls, client, uuid, deleted=False, format='json'):
         url = [settings.get('base', 'paths.api.transcripts'), uuid]
         response = client.request(url=url, accept=format)
-
         content = None
         if format != 'json':
             content = response
@@ -27,6 +26,8 @@ class Transcript(BaseObject):
         response_json = json.loads(response)
         if content is not None:
             response_json['content'] = content
+        else:
+            response_json['content'] = json.dumps(response_json['segmentation'])
 
         return Transcript(fields=response_json)
 

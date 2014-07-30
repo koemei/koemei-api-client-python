@@ -4,3 +4,4 @@
 settings.ini
 *.pyc
 /Koemei_API_Client.egg-info
+/resources/transcript/done

@@ -59,9 +59,11 @@ def main():
     """
 
     #batch_download_transcript()
-    batch_upload_transcribe()
-
+    #batch_upload_transcribe()
     #batch_align()
+    #batch_transcribe()
+    batch_anthrotranscribe()
+
 
 
 def batch_download_transcript():
@@ -90,7 +92,7 @@ def batch_upload_transcribe():
     )['data']
     for media_item in media_to_upload_transcribe:
         upload_transcribe(
-            media_filename=media_item[0],
+            media_filename=media_item[0].strip(),
             title=media_item[1]
         )
 
@@ -99,7 +101,7 @@ def download_transcript(media_uuid):
     media_item = Media.get(client=client, uuid=media_uuid)
     print media_item.current_transcript
 
-    transcript = Transcript.get(client=client, uuid=media_item.current_transcript['uuid'], format='srt')
+    transcript = Transcript.get(client=client, uuid=media_item.current_transcript['uuid'], format='json')
     if not os.path.exists(settings.get('base','path.local.scripts.output')):
         os.makedirs(settings.get('base','path.local.scripts.output'))
     f = open("%s/%s.srt" % (settings.get('base','path.local.scripts.output'), media_item.title), 'w')
@@ -118,11 +120,42 @@ def batch_align():
     )['data']
     for media_item in media_to_align:
         upload_align(
-            media_filename=media_item[1],
+            media_filename=media_item[1].strip(),
             aligndata="%s/%s.txt" % (
                 settings.get('base', 'path.local.transcripts'),
                 media_item[0],
             )
+        )
+
+
+def batch_transcribe():
+    register_openers()
+
+    # transcribe all the files from the csv
+    media_to_transcribe = csv_to_json(
+        csv_filename="%s/%s" % (
+            settings.get('base', 'path.local.media'),
+            settings.get('test', 'media.existing.transcribe.csv')
+        )
+    )['data']
+    for media_item in media_to_transcribe:
+        transcribe(
+            media_uuid=media_item[0],
+        )
+
+def batch_anthrotranscribe():
+    register_openers()
+
+    # transcribe all the files from the csv
+    media_to_anthrotranscribe = csv_to_json(
+        csv_filename="%s/%s" % (
+            settings.get('base', 'path.local.media'),
+            settings.get('test', 'media.existing.anthrotranscribe.csv')
+        )
+    )['data']
+    for media_item in media_to_anthrotranscribe:
+        anthrotranscribe(
+            media_uuid=media_item[0],
         )
 
 
@@ -133,7 +166,11 @@ def upload_transcribe(media_filename, title=None):
 
     try:
         log.info("Upload and transcribe file %s ..." % media_filename)
-        media_item = Media.create(client=client, media_filename=media_filename, title=title)
+        media_item = Media.create(
+            client=client,
+            media_filename=media_filename,
+            title=title
+        )
         log.info("... OK - media uuid: %s" % media_item.uuid)
     except Exception, e:
         log.error("... Error creating media %s ..." % media_filename)
@@ -178,6 +215,21 @@ def upload_align(media_filename, aligndata):
         log.error(e)
         log.error(traceback.format_exc())
         raise e
+
+def transcribe(media_uuid):
+    """
+    Launch transcription process for a given media
+    """
+    media_item = Media.get(client=client, uuid=media_uuid)
+    media_item.transcribe(client=client)
+
+
+def anthrotranscribe(media_uuid):
+    """
+    Launch transcription process for a given media
+    """
+    media_item = Media.get(client=client, uuid=media_uuid)
+    media_item.anthrotranscribe(client=client)
 
 
 if __name__ == "__main__":
