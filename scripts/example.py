@@ -62,13 +62,12 @@ def main():
     #batch_upload_transcribe()
     #batch_align()
     #batch_transcribe()
-    batch_anthrotranscribe()
+    #batch_anthrotranscribe()
+    upload_transcribe(media_filename="https://datacloud.klewel.com/videos/capture/7XpcT77wdkN3e8QLrHtwJC.mp4")
 
 
 
 def batch_download_transcript():
-    register_openers()
-
     media_to_download_transcript_for = csv_to_json(
         csv_filename="%s/%s" % (
             settings.get('base', 'path.local.transcripts'),
@@ -82,8 +81,6 @@ def batch_download_transcript():
 
 
 def batch_upload_transcribe():
-    register_openers()
-
     media_to_upload_transcribe = csv_to_json(
         csv_filename="%s/%s" % (
             settings.get('base', 'path.local.media'),
@@ -98,6 +95,7 @@ def batch_upload_transcribe():
 
 
 def download_transcript(media_uuid):
+    register_openers()
     media_item = Media.get(client=client, uuid=media_uuid)
     print media_item.current_transcript
 
@@ -129,7 +127,6 @@ def batch_align():
 
 
 def batch_transcribe():
-    register_openers()
 
     # transcribe all the files from the csv
     media_to_transcribe = csv_to_json(
@@ -144,7 +141,6 @@ def batch_transcribe():
         )
 
 def batch_anthrotranscribe():
-    register_openers()
 
     # transcribe all the files from the csv
     media_to_anthrotranscribe = csv_to_json(
@@ -163,6 +159,7 @@ def upload_transcribe(media_filename, title=None):
     """
     Upload a media file to Koemei for transcription
     """
+    register_openers()
 
     try:
         log.info("Upload and transcribe file %s ..." % media_filename)
@@ -184,6 +181,7 @@ def publish_unpublish(media_uuid):
     Publish and unpublish a media item's transcript.
     Publishing a transcript will make it available to anyone that knowns its uuid
     """
+    register_openers()
     media_item = Media(accept='text/xml', username=username, password=password, uid=media_uuid)
     media_item.get()
     #from xml.dom import minidom
@@ -198,7 +196,7 @@ def upload_align(media_filename, aligndata):
     Upload a media file to Koemei for alignment
     NOTE : you will need your account to be specially setup to use this feature
     """
-
+    register_openers()
     try:
         log.info("Upload and align media %s ..." % media_filename)
 
@@ -220,6 +218,7 @@ def transcribe(media_uuid):
     """
     Launch transcription process for a given media
     """
+    register_openers()
     media_item = Media.get(client=client, uuid=media_uuid)
     media_item.transcribe(client=client)
 
@@ -228,6 +227,7 @@ def anthrotranscribe(media_uuid):
     """
     Launch transcription process for a given media
     """
+    register_openers()
     media_item = Media.get(client=client, uuid=media_uuid)
     media_item.anthrotranscribe(client=client)
 
