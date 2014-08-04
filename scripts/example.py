@@ -59,11 +59,10 @@ def main():
     """
 
     #batch_download_transcript()
-    #batch_upload_transcribe()
+    batch_upload_transcribe()
     #batch_align()
     #batch_transcribe()
     #batch_anthrotranscribe()
-    upload_transcribe(media_filename="https://datacloud.klewel.com/videos/capture/7XpcT77wdkN3e8QLrHtwJC.mp4")
 
 
 
