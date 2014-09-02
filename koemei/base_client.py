@@ -62,7 +62,7 @@ class BaseClient(object):
             log.error(traceback.format_exc())
             raise
 
-    def request(self, url, data=None, headers={}, url_params=None, accept=None):
+    def request(self, url, data=None, headers={}, url_params=None, accept=None, method=None):
         """
         GET call at the given url
         @params url: the path to the method to call, relative to the api root url
@@ -76,6 +76,10 @@ class BaseClient(object):
         log.debug(headers)
 
         request = urllib2.Request(self.path(url, url_params), data=data, headers=headers)
+
+        if method is not None:
+            # :( this is probably as good as it gets with urllib2
+            request.get_method = lambda: method
 
         try:
             #print dir(request)

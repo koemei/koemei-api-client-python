@@ -1,67 +1,37 @@
-import sys, urllib2, urllib
+import urllib
+from koemei.utils.encode import multipart_encode, MultipartParam
+from koemei.utils import log, settings, read_file, check_file_extension
+from koemei.utils.streaminghttp import register_openers
+import json
 
 from base_object import BaseObject
 
 
 class KObject(BaseObject):
 
+    def __init__(self, fields={}):
+        """
+        @param fields [Hash]
+        """
+        super(KObject, self).__init__(fields=fields)
 
-    def __init__(self, accept, username="", password="", uid="", process_id="", audioFilename="", metadataFilename="",
-                 transcriptFilename="", service=None, item_id=None, count=None):
-        BaseObject.__init__(
-            self,
-            accept,
-            username=username,
-            password=password,
-            uid=uid,
-            process_id=process_id,
-            audioFilename=audioFilename,
-            metadataFilename=metadataFilename,
-            transcriptFilename=transcriptFilename,
-            service=service,
-            item_id=item_id,
-            count=count
-        )
-        self.path = 'kobjects/'
+    @classmethod
+    def get(cls, client, uuid, deleted=False):
+        url = [settings.get('base', 'paths.api.kobjects'), uuid]
+        response = client.request(url=url)
+        response_json = json.loads(response)
+        return KObject(fields=response_json["kobject"])
 
-    @BaseObject._reset_headers
-    def get(self):
-        print >> sys.stderr, 'making get request to: %s%s' % (self.dest, self.path + self.uid)
-        request = urllib2.Request(self.dest + self.path + self.uid, headers=self.headers)
-        BaseObject._execute(self, request)
+    @classmethod
+    def delete(cls, client, uuid, **kwargs):
+    url_params = {}
+    if kwargs.get('delete_transcripts'):
+        url_params.update({'delete_transcripts': 'true'})
 
-
-    @BaseObject._reset_headers
-    def delete(self):
-        print >> sys.stderr, 'making delete request to: %s%s' % (self.dest, self.path + self.uid)
-        request = urllib2.Request(self.dest + self.path + self.uid, headers=self.headers)
-        request.get_method = lambda: 'DELETE'
-        BaseObject._execute(self, request)
-
-
-    @BaseObject._reset_headers
-    def get_list(self):
-        print >> sys.stderr, 'making get request to: %s%s' % (self.dest, self.path)
-
-        data = {}
-
-        if self.count:
-            data.update({'count': self.count})
-
-        if self.status:
-            data.update({'status_filter': '-'.join(map(lambda x: str(x), self.status))})
-
-        data = urllib.urlencode(data)
-        url = "%s/%s?%s" % (self.dest, self.path, data)
-
-        request = urllib2.Request(url, headers=self.headers)
-
-        BaseObject._execute(self, request)
-
-    # create a new K-Object
-    @BaseObject._reset_headers
-    def create(self):
-        print >> sys.stderr, 'making post request to: %s%s' % (self.dest, self.path)
-        self.datagen = {}
-        request = urllib2.Request(self.dest + self.path, data="", headers=self.headers)
-        BaseObject._execute(self, request)
+    url = [settings.get('base', 'paths.api.kobjects'), uuid]
+    response = client.request(url=url, url_params=url_params, method='DELETE')
+    print
+    print response
+    print
+    response_json = json.loads(response)
+    return KObject(fields=response_json['kobject'])

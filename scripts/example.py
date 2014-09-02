@@ -19,6 +19,7 @@ import os
 import traceback
 from koemei.model.media import Media
 from koemei.model.transcript import Transcript
+from koemei.model.kobject import KObject
 from koemei.client import KoemeiClient
 from koemei.utils import settings, log
 from koemei.utils.file import csv_to_json
@@ -64,6 +65,10 @@ def main():
     #batch_transcribe()
     #batch_anthrotranscribe()
 
+
+def delete_media():
+    media_item = Media.get(client=client, uuid='28b5e028-fddf-4de2-a9ec-6b222f39e215')
+    KObject.delete(client=client, uuid=media_item.kobject_uuid, delete_transcripts=True)
 
 
 def batch_download_transcript():
