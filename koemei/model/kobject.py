@@ -24,14 +24,16 @@ class KObject(BaseObject):
 
     @classmethod
     def delete(cls, client, uuid, **kwargs):
-    url_params = {}
-    if kwargs.get('delete_transcripts'):
-        url_params.update({'delete_transcripts': 'true'})
+        url_params = {}
+        if kwargs.get('delete_transcripts'):
+            url_params.update({'delete_transcripts': 'true'})
+        if kwargs.get('delete_storage'):
+            url_params.update({'delete_storage': 'true'})
 
-    url = [settings.get('base', 'paths.api.kobjects'), uuid]
-    response = client.request(url=url, url_params=url_params, method='DELETE')
-    print
-    print response
-    print
-    response_json = json.loads(response)
-    return KObject(fields=response_json['kobject'])
+        url = [settings.get('base', 'paths.api.kobjects'), uuid]
+        response = client.request(url=url, url_params=url_params, method='DELETE')
+        print
+        print response
+        print
+        response_json = json.loads(response)
+        return KObject(fields=response_json['kobject'])
